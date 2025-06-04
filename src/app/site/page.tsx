@@ -14,10 +14,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default async function Home() {
-  const prices = await stripe.prices.list({
-    product: process.env.NEXT_PLURA_PRODUCT_ID,
-    active: true,
-  })
+  let prices: { data: any[] } = { data: [] }
+  
+  // Only fetch prices if Stripe is configured
+  if (process.env.STRIPE_SECRET_KEY && process.env.NEXT_PLURA_PRODUCT_ID) {
+    try {
+      prices = await stripe.prices.list({
+        product: process.env.NEXT_PLURA_PRODUCT_ID,
+        active: true,
+      })
+    } catch (error) {
+      console.error('Failed to fetch Stripe prices:', error)
+    }
+  }
 
   return (
     <>

@@ -18,10 +18,18 @@ export default authMiddleware({
     }`
 
     //if subdomain exists
-    const customSubDomain = hostname
-      .get('host')
-      ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
-      .filter(Boolean)[0]
+    const host = hostname.get('host') || ''
+    const domain = process.env.NEXT_PUBLIC_DOMAIN || ''
+    
+    // Handle localhost with port correctly
+    let customSubDomain = ''
+    if (host && domain) {
+      // For localhost:3000, we need to check against 'localhost' without port
+      const hostWithoutPort = host.split(':')[0]
+      if (hostWithoutPort !== domain && host.includes(domain)) {
+        customSubDomain = host.split(domain)[0].replace('.', '')
+      }
+    }
 
     if (customSubDomain) {
       return NextResponse.rewrite(

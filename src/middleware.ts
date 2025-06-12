@@ -17,10 +17,10 @@ export default authMiddleware({
       searchParams.length > 0 ? `?${searchParams}` : ''
     }`
 
-    //if subdomain exists
+    // if subdomain exists
     const host = hostname.get('host') || ''
     const domain = process.env.NEXT_PUBLIC_DOMAIN || ''
-    
+    console.log(host, domain)
     // Handle localhost with port correctly
     let customSubDomain = ''
     if (host && domain) {
@@ -30,6 +30,10 @@ export default authMiddleware({
         customSubDomain = host.split(domain)[0].replace('.', '')
       }
     }
+    // const customSubDomain = hostname
+    // .get('host')
+    // ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
+    // .filter(Boolean)[0]
 
     if (customSubDomain) {
       return NextResponse.rewrite(

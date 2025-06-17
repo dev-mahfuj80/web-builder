@@ -1,6 +1,6 @@
 'use server'
 
-import { clerkClient, currentUser } from '@clerk/nextjs'
+import { clerkClient, currentUser } from '@clerk/nextjs/server'
 import { db } from './db'
 import { redirect } from 'next/navigation'
 import {
@@ -170,7 +170,8 @@ export const verifyAndAcceptInvitation = async () => {
     })
 
     if (userDetails) {
-      await clerkClient.users.updateUserMetadata(user.id, {
+      const clerk = await clerkClient();
+      await clerk.users.updateUserMetadata(user.id, {
         privateMetadata: {
           role: userDetails.role || 'SUBACCOUNT_USER',
         },
@@ -225,8 +226,8 @@ export const initUser = async (newUser: Partial<User>) => {
       role: newUser.role || 'SUBACCOUNT_USER',
     },
   })
-
-  await clerkClient.users.updateUserMetadata(user.id, {
+const clerk = await clerkClient()
+  await clerk.users.updateUserMetadata(user.id, {
     privateMetadata: {
       role: newUser.role || 'SUBACCOUNT_USER',
     },
@@ -399,8 +400,8 @@ export const updateUser = async (user: Partial<User>) => {
     where: { email: user.email },
     data: { ...user },
   })
-
-  await clerkClient.users.updateUserMetadata(response.id, {
+const clerk = await clerkClient()
+  await clerk.users.updateUserMetadata(response.id, {
     privateMetadata: {
       role: user.role || 'SUBACCOUNT_USER',
     },
@@ -450,7 +451,8 @@ export const deleteSubAccount = async (subaccountId: string) => {
 }
 
 export const deleteUser = async (userId: string) => {
-  await clerkClient.users.updateUserMetadata(userId, {
+const clerk = await clerkClient()
+  await clerk.users.updateUserMetadata(userId, {
     privateMetadata: {
       role: undefined,
     },
@@ -480,7 +482,8 @@ export const sendInvitation = async (
   })
 
   try {
-    const invitation = await clerkClient.invitations.createInvitation({
+    const clerk = await clerkClient()
+    const invitation = await clerk.invitations.createInvitation({
       emailAddress: email,
       redirectUrl: process.env.NEXT_PUBLIC_URL,
       publicMetadata: {

@@ -10,6 +10,7 @@ type Props = {
 };
 
 const Navigation = ({ user }: Props) => {
+  console.log(user);
   return (
     <div className="fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10">
       <aside className="flex items-center gap-2">
@@ -34,7 +35,7 @@ const Navigation = ({ user }: Props) => {
           href={"/agency"}
           className="bg-primary text-white p-2 px-4 rounded-md hover:bg-primary/80"
         >
-          Login
+          {user ? "Dashboard" : "Login"}
         </Link>
         <UserButton />
         <ModeToggle />

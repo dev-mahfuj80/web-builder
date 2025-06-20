@@ -1,55 +1,55 @@
-'use client'
-import CreateFunnelPage from '@/components/forms/funnel-page'
-import CustomModal from '@/components/global/custom-modal'
-import { AlertDialog } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { toast } from '@/components/ui/use-toast'
-import { upsertFunnelPage } from '@/lib/queries'
-import { FunnelsForSubAccount } from '@/lib/types'
-import { useModal } from '@/providers/modal-provider'
-import { FunnelPage } from '@prisma/client'
-import { Check, ExternalLink, LucideEdit } from 'lucide-react'
-import React, { useState } from 'react'
+"use client";
+import CreateFunnelPage from "@/components/forms/funnel-page";
+import CustomModal from "@/components/global/custom-modal";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "@/components/ui/use-toast";
+import { upsertFunnelPage } from "@/lib/queries";
+import { FunnelsForSubAccount } from "@/lib/types";
+import { useModal } from "@/providers/modal-provider";
+import { FunnelPage } from "@prisma/client";
+import { Check, ExternalLink, LucideEdit } from "lucide-react";
+import React, { useState } from "react";
 
 import {
   DragDropContext,
   DragStart,
   DropResult,
   Droppable,
-} from 'react-beautiful-dnd'
-import Link from 'next/link'
-import FunnelPagePlaceholder from '@/components/icons/funnel-page-placeholder'
+} from "react-beautiful-dnd";
+import Link from "next/link";
+import FunnelPagePlaceholder from "@/components/icons/funnel-page-placeholder";
 
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import FunnelStepCard from './funnel-step-card'
+} from "@/components/ui/card";
+import FunnelStepCard from "./funnel-step-card";
 
 type Props = {
-  funnel: FunnelsForSubAccount
-  subaccountId: string
-  pages: FunnelPage[]
-  funnelId: string
-}
+  funnel: FunnelsForSubAccount;
+  subaccountId: string;
+  pages: FunnelPage[];
+  funnelId: string;
+};
 
 const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
   const [clickedPage, setClickedPage] = useState<FunnelPage | undefined>(
     pages[0]
-  )
-  const { setOpen } = useModal()
-  const [pagesState, setPagesState] = useState(pages)
+  );
+  const { setOpen } = useModal();
+  const [pagesState, setPagesState] = useState(pages);
   const onDragStart = (event: DragStart) => {
     //current chosen page
-    const { draggableId } = event
-    const value = pagesState.find((page) => page.id === draggableId)
-  }
+    const { draggableId } = event;
+    const value = pagesState.find((page) => page.id === draggableId);
+  };
 
   const onDragEnd = (dropResult: DropResult) => {
-    const { destination, source } = dropResult
+    const { destination, source } = dropResult;
 
     //no destination or same position
     if (
@@ -57,17 +57,17 @@ const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
       (destination.droppableId === source.droppableId &&
         destination.index === source.index)
     ) {
-      return
+      return;
     }
     //change state
     const newPageOrder = [...pagesState]
       .toSpliced(source.index, 1)
       .toSpliced(destination.index, 0, pagesState[source.index])
       .map((page, idx) => {
-        return { ...page, order: idx }
-      })
+        return { ...page, order: idx };
+      });
 
-    setPagesState(newPageOrder)
+    setPagesState(newPageOrder);
     newPageOrder.forEach(async (page, index) => {
       try {
         await upsertFunnelPage(
@@ -78,23 +78,23 @@ const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
             name: page.name,
           },
           funnelId
-        )
+        );
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast({
-          variant: 'destructive',
-          title: 'Failed',
-          description: 'Could not save page order',
-        })
-        return
+          variant: "destructive",
+          title: "Failed",
+          description: "Could not save page order",
+        });
+        return;
       }
-    })
+    });
 
     toast({
-      title: 'Success',
-      description: 'Saved page order',
-    })
-  }
+      title: "Success",
+      description: "Saved page order",
+    });
+  };
 
   return (
     <AlertDialog>
@@ -106,20 +106,14 @@ const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
               Funnel Steps
             </div>
             {pagesState.length ? (
-              <DragDropContext
-                onDragEnd={onDragEnd}
-                onDragStart={onDragStart}
-              >
+              <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
                 <Droppable
                   droppableId="funnels"
                   direction="vertical"
                   key="funnels"
                 >
                   {(provided) => (
-                    <div
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
+                    <div {...provided.droppableProps} ref={provided.innerRef}>
                       {pagesState.map((page, idx) => (
                         <div
                           className="relative"
@@ -158,7 +152,7 @@ const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
                     order={pagesState.length}
                   />
                 </CustomModal>
-              )
+              );
             }}
           >
             Create New Steps
@@ -216,7 +210,7 @@ const FunnelSteps = ({ funnel, funnelId, pages, subaccountId }: Props) => {
         </aside>
       </div>
     </AlertDialog>
-  )
-}
+  );
+};
 
-export default FunnelSteps
+export default FunnelSteps;

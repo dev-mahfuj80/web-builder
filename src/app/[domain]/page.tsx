@@ -7,16 +7,13 @@ import FunnelEditorNavigation from "../(main)/subaccount/[subaccountId]/funnels/
 import FunnelEditor from "../(main)/subaccount/[subaccountId]/funnels/[funnelId]/editor/[funnelPageId]/_components/funnel-editor";
 
 const Page = async ({ params }: { params: { domain: string } }) => {
-  console.log("1");
   const domainData = await getDomainContent(params.domain.slice(0, -1));
   if (!domainData) return notFound();
-  console.log("2");
+
   const pageData = domainData.FunnelPages.find((page) => !page.pathName);
-  console.log("3");
 
   if (!pageData) return notFound();
 
-  console.log("4");
   await db.funnelPage.update({
     where: {
       id: pageData.id,

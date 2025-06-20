@@ -158,25 +158,6 @@ export default async function Home() {
           </Card>
         </div>
       </section>
-      {/* Features */}
-      <section>
-        <h2 className="text-4xl text-center">Features</h2>
-        <p className="text-muted-foreground text-center">
-          Our straightforward pricing plans are tailored to meet your needs. If
-          {" you're"} not ready to commit you can get started for free.
-        </p>
-        <div className="flex justify-center items-center flex-col gap-4">
-          <div className="flex gap-4">
-            <Image
-              src={"/assets/preview.png"}
-              alt="banner image"
-              height={1200}
-              width={1200}
-              className="rounded-tl-2xl rounded-tr-2xl border-2 border-muted"
-            />
-          </div>
-        </div>
-      </section>
     </>
   );
 }

@@ -23,6 +23,9 @@ const FunnelSettings: React.FC<FunnelSettingsProps> = async ({
   subaccountId,
   defaultData,
 }) => {
+  // console.log("subaccountId", subaccountId);
+  // console.log("defaultData", defaultData);
+  console.log(1);
   //CHALLENGE: go connect your stripe to sell products
 
   const subaccountDetails = await db.subAccount.findUnique({
